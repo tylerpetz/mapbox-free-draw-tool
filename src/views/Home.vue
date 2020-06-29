@@ -2,10 +2,14 @@
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import { listings } from '../assets/listings.json';
 import { placeGeo } from '../assets/placeGeo.json';
-// eslint-disable-next-line import/prefer-default-export
-const mapDraw = new MapboxDraw();
-
-mapDraw.modes.draw_polygon = require('mapbox-gl-draw-freehand-mode');
+/* eslint-disable */
+const mapDraw = new MapboxDraw({
+  displayControlsDefault: false,
+  modes: Object.assign({
+    draw_free: require('mapbox-gl-draw-freehand-mode'),
+  }, MapboxDraw.modes),
+});
+/* eslint-enable */
 
 export default {
   name: 'Home',
@@ -13,6 +17,8 @@ export default {
     return {
       token: 'pk.eyJ1IjoiYW50aG9ueWJvb2oiLCJhIjoiY2syYW5qdzN5MTh5ZjNjbzJybzE3YmtibCJ9.vqfOJE75lgAESfQQvbuN1Q',
       mapStyle: 'mapbox://styles/anthonybooj/ck9rpjcig3llg1io29wpjrqz6',
+      drawing: false,
+      map: null,
     };
   },
   computed: {
@@ -63,6 +69,7 @@ export default {
   },
   methods: {
     onMapLoaded(event) {
+      this.map = event.map;
       event.map.addControl(mapDraw);
     },
     geoToPolygon(geometryObject) {
@@ -113,8 +120,10 @@ export default {
     enableDraw() {
       // const { map } = this.$refs.mapObj;
       // map.addSource('placeGeo', this.geoJsonSource);
+      // eslint-disable-next-line
+      this.map._interactive = false;
       mapDraw.deleteAll().trash();
-      mapDraw.changeMode('draw_polygon');
+      mapDraw.changeMode('draw_free');
       // map.addLayer(this.geoJsonLayer);
     },
   },
