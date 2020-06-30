@@ -140,7 +140,7 @@ export default {
           this.placeGeometry = features[0];
         }
       });
-      event.map.on('draw.delete', ({ features }) => {
+      event.map.on('draw.delete', () => {
         document.body.classList.remove('drawing');
       });
     },
