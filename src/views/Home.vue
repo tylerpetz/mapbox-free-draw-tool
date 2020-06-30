@@ -75,6 +75,8 @@ export default {
       event.map.on('draw.create', ({ features }) => {
         if (features) {
           // eslint-disable-next-line
+          alert('event!')
+          // eslint-disable-next-line
           this.placeGeometry = features[0];
         }
       });
