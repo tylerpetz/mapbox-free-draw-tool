@@ -5,10 +5,8 @@ import { placeGeo } from '../assets/placeGeo.json';
 /* eslint-disable */
 
 const drawTool = require('mapbox-gl-draw-freehand-mode')
-drawTool.default.onDragEnd = function(state, e) {
-    document.body.classList.add('touchend');
-    this.onMouseUp(state, e)
-}
+drawTool.default.onDrag = null
+console.log(drawTool)
 const mapDraw = new MapboxDraw({
   displayControlsDefault: false,
   clickBuffer: 5,
@@ -202,6 +200,7 @@ export default {
       :zoom="10"
       :show-zoom="true"
       :pitch="25"
+      :interactive="false"
       @load="onMapLoaded"
     >
       <MglGeolocateControl position="bottom-right" />
