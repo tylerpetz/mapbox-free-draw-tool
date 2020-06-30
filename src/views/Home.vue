@@ -157,13 +157,18 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style>
+* {
+  box-sizing: border-box;
+}
+
 .home {
   padding: 1rem;
+  height: 100vh;
 }
 
 .home > div {
-  height: 100vh;
+  height: 100%;
 }
 
 .fixed-button {
