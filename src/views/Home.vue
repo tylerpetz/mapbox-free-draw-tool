@@ -135,10 +135,13 @@ export default {
       event.map.on('draw.update', ({ features }) => {
         if (features) {
           // eslint-disable-next-line
-          alert('update!')
+          document.body.classList.add('drawing')
           // eslint-disable-next-line
           this.placeGeometry = features[0];
         }
+      });
+      event.map.on('draw.delete', ({ features }) => {
+        document.body.classList.remove('drawing');
       });
     },
     geoToPolygon(geometryObject) {
@@ -222,6 +225,10 @@ export default {
 <style>
 * {
   box-sizing: border-box;
+}
+
+body.drawing {
+  background-color: blue;
 }
 
 .home {
