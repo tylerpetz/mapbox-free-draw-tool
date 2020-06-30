@@ -3,6 +3,12 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import { listings } from '../assets/listings.json';
 import { placeGeo } from '../assets/placeGeo.json';
 /* eslint-disable */
+
+const drawTool = require('mapbox-gl-draw-freehand-mode')
+drawTool.default.onDragEnd = function(state, e) {
+    document.body.classList.add('touchend');
+    this.onMouseUp(state, e)
+}
 const mapDraw = new MapboxDraw({
   displayControlsDefault: false,
   clickBuffer: 5,
@@ -71,7 +77,7 @@ const mapDraw = new MapboxDraw({
     },
   ],
   modes: Object.assign({
-    draw_polygon: require('mapbox-gl-draw-freehand-mode'),
+    draw_polygon: drawTool,
   }, MapboxDraw.modes),
 });
 /* eslint-enable */
@@ -130,9 +136,9 @@ export default {
     },
   },
   methods: {
-    onMapLoaded(event) {
-      event.map.addControl(mapDraw);
-      event.map.on('draw.create', ({ features }) => {
+    onMapLoaded({ map }) {
+      map.addControl(mapDraw);
+      map.on('draw.create', ({ features }) => {
         if (features) {
           // eslint-disable-next-line
           document.body.classList.add('drawing')
@@ -140,9 +146,8 @@ export default {
           this.placeGeometry = features[0];
         }
       });
-      event.map.on('draw.delete', () => {
-        document.body.classList.remove('drawing');
-        document.body.classList.remove('updated');
+      map.on('draw.delete', () => {
+        document.body.classList.remove('drawing touchend');
       });
     },
     geoToPolygon(geometryObject) {
@@ -232,8 +237,8 @@ body.drawing {
   background-color: blue;
 }
 
-body.updated {
-  background-color: rgba(0,0,0,.5);
+body.touchend {
+  background-color:green;
 }
 
 .home {
