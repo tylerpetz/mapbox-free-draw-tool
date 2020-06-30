@@ -5,6 +5,8 @@ import { placeGeo } from '../assets/placeGeo.json';
 /* eslint-disable */
 const mapDraw = new MapboxDraw({
   displayControlsDefault: false,
+  clickBuffer: 5,
+  touchBuffer: 45,
   controls: {
     polygon: true,
   },
