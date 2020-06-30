@@ -132,7 +132,7 @@ export default {
   methods: {
     onMapLoaded(event) {
       event.map.addControl(mapDraw);
-      event.map.on('draw.update', ({ features }) => {
+      event.map.on('draw.create', ({ features }) => {
         if (features) {
           // eslint-disable-next-line
           document.body.classList.add('drawing')
@@ -142,6 +142,7 @@ export default {
       });
       event.map.on('draw.delete', () => {
         document.body.classList.remove('drawing');
+        document.body.classList.remove('updated');
       });
     },
     geoToPolygon(geometryObject) {
@@ -229,6 +230,10 @@ export default {
 
 body.drawing {
   background-color: blue;
+}
+
+body.updated {
+  background-color: rgba(0,0,0,.5);
 }
 
 .home {
