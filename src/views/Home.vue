@@ -10,8 +10,68 @@ const mapDraw = new MapboxDraw({
   controls: {
     polygon: true,
   },
+  styles: [
+    // ACTIVE (being drawn)
+    // line stroke
+    // polygon fill
+    {
+      "id": "gl-draw-polygon-fill",
+      "type": "fill",
+      "filter": ["all", ["==", "$type", "Polygon"], ["!=", "mode", "static"]],
+      "paint": {
+        "fill-color": "#003da5",
+        "fill-outline-color": "#003da5",
+        "fill-opacity": 0.1
+      }
+    },
+    // polygon outline stroke
+    // This doesn't style the first edge of the polygon, which uses the line stroke styling instead
+    {
+      id: 'gl-draw-polygon-stroke-active',
+      type: 'line',
+      filter: ['all', ['==', '$type', 'Polygon'], ['!=', 'mode', 'static']],
+      layout: {
+        'line-cap': 'round',
+        'line-join': 'round',
+      },
+      paint: {
+        'line-color': '#003da5',
+        'line-width': 2,
+      },
+    },
+
+    // INACTIVE (static, already drawn)
+    // line stroke
+    {
+      id: 'gl-draw-line-static',
+      type: 'line',
+      filter: ['all', ['==', '$type', 'LineString'], ['==', 'mode', 'static']],
+      layout: {
+        'line-cap': 'round',
+        'line-join': 'round',
+      },
+      paint: {
+        'line-color': '#000',
+        'line-width': 3,
+      },
+    },
+    // polygon outline
+    {
+      id: 'gl-draw-polygon-stroke-static',
+      type: 'line',
+      filter: ['all', ['==', '$type', 'Polygon'], ['==', 'mode', 'static']],
+      layout: {
+        'line-cap': 'round',
+        'line-join': 'round',
+      },
+      paint: {
+        'line-color': '#000',
+        'line-width': 3,
+      },
+    },
+  ],
   modes: Object.assign({
-    draw_free: require('mapbox-gl-draw-freehand-mode'),
+    draw_polygon: require('mapbox-gl-draw-freehand-mode'),
   }, MapboxDraw.modes),
 });
 /* eslint-enable */
@@ -72,10 +132,10 @@ export default {
   methods: {
     onMapLoaded(event) {
       event.map.addControl(mapDraw);
-      event.map.on('draw.create', ({ features }) => {
+      event.map.on('draw.update', ({ features }) => {
         if (features) {
           // eslint-disable-next-line
-          alert('event!')
+          alert('update!')
           // eslint-disable-next-line
           this.placeGeometry = features[0];
         }
