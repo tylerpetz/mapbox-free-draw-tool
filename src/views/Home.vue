@@ -5,6 +5,9 @@ import { placeGeo } from '../assets/placeGeo.json';
 /* eslint-disable */
 const mapDraw = new MapboxDraw({
   displayControlsDefault: false,
+  controls: {
+    polygon: true,
+  },
   modes: Object.assign({
     draw_free: require('mapbox-gl-draw-freehand-mode'),
   }, MapboxDraw.modes),
@@ -16,9 +19,9 @@ export default {
   data() {
     return {
       token: 'pk.eyJ1IjoiYW50aG9ueWJvb2oiLCJhIjoiY2syYW5qdzN5MTh5ZjNjbzJybzE3YmtibCJ9.vqfOJE75lgAESfQQvbuN1Q',
-      mapStyle: 'mapbox://styles/anthonybooj/ck9rpjcig3llg1io29wpjrqz6',
+      mapStyle: 'mapbox://styles/mapbox/streets-v11',
       drawing: false,
-      map: null,
+      placeGeometry: placeGeo,
     };
   },
   computed: {
@@ -63,14 +66,16 @@ export default {
       }
       return false;
     },
-    placeGeometry() {
-      return placeGeo;
-    },
   },
   methods: {
     onMapLoaded(event) {
-      this.map = event.map;
       event.map.addControl(mapDraw);
+      event.map.on('draw.create', ({ features }) => {
+        if (features) {
+          // eslint-disable-next-line
+          this.placeGeometry = features[0];
+        }
+      });
     },
     geoToPolygon(geometryObject) {
       if (geometryObject.coordinates.length > 0) {
@@ -109,23 +114,6 @@ export default {
       }
       return false;
     },
-    handleDrawEvent(event) {
-      event.map.on('draw.create', (e) => {
-        console.log('drawevent', e);
-        if (e.features.length) {
-          // this.commitPointsToSearch(e.features[0].geometry.coordinates[0]);
-        }
-      });
-    },
-    enableDraw() {
-      // const { map } = this.$refs.mapObj;
-      // map.addSource('placeGeo', this.geoJsonSource);
-      // eslint-disable-next-line
-      this.map._interactive = false;
-      mapDraw.deleteAll().trash();
-      mapDraw.changeMode('draw_free');
-      // map.addLayer(this.geoJsonLayer);
-    },
   },
 };
 </script>
@@ -146,14 +134,14 @@ export default {
       <MglGeolocateControl position="bottom-right" />
       <MglNavigationControl position="bottom-right" />
 
-      <template v-if="geoJsonSource">
+      <!-- <template v-if="geoJsonSource">
         <MglGeojsonLayer
           :source-id="geoJsonSource.data.id"
           :source="geoJsonSource"
           layer-id="placeGeo"
           :layer="geoJsonLayer"
         />
-      </template>
+      </template> -->
 
       <transition-group name="fade">
         <MglMarker
@@ -164,7 +152,6 @@ export default {
         />
       </transition-group>
     </MglMap>
-    <button class="fixed-button" @click="enableDraw">Enable draw tool</button>
   </div>
 </template>
 
